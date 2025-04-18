@@ -10,7 +10,7 @@ import pickle as pkl
 
 class loanclassModel:
     def __init__(self, filepath):
-        self.filepath = filepath
+        self.filepath = "Dataset_A_loan.csv")
         self.df = pd.read_csv(filepath)
         self.df_encoded = None
         self.x_train = self.x_test = self.y_train = self.y_test = None
