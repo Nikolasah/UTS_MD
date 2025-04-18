@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-model = joblib.load("C:\\Users\\NicholasAH\\OneDrive - Bina Nusantara\\KULIAHHHHHH\\Model Deployment\\UTS\\rf_class.pkl")
+model = joblib.load("rf_class.pkl")
 
 class loanclassmodel:
     def __init__(self, model):
