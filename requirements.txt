@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 absl-py==1.4.0
 accelerate==1.5.2
 aiohappyeyeballs==2.6.1
@@ -604,3 +605,10 @@ yfinance==0.2.55
 zict==3.0.0
 zipp==3.21.0
 zstandard==0.23.0
+=======
+Streamlit==1.43.2
+Joblib==1.4.2
+Numpy==1.23.5
+Pandas==2.2.3
+Scikit-learn==1.6.1
+>>>>>>> 1b2879ee65ff417a510cb7e7b06a9400dfe7f8c9
