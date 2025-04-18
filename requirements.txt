@@ -1,0 +1,5 @@
+Streamlit==1.43.2
+Joblib==1.4.2
+Numpy==1.23.5
+Pandas==2.2.3
+Scikit-learn==1.6.1
