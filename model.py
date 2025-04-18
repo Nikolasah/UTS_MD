@@ -79,3 +79,5 @@ class loanclassModel:
         self.split_and_scale()
         self.train_models()
         self.evaluate_models()
+
+
