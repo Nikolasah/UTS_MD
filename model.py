@@ -3,8 +3,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, LabelBinarizer
 from sklearn.metrics import classification_report, roc_auc_score, ConfusionMatrixDisplay
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 from feature_engine.outliers import ArbitraryOutlierCapper
+from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
 import pickle as pkl
 
@@ -15,7 +16,7 @@ class loanclassModel:
         self.df_encoded = None
         self.x_train = self.x_test = self.y_train = self.y_test = None
         self.scaler = MinMaxScaler()
-        self.rf_model = None
+        self.model = None
         self.numerical_cols = [
             'person_age', 'person_emp_exp', 'person_income', 'loan_amnt', 
             'loan_int_rate', 'loan_percent_income', 'cb_person_cred_hist_length', 
@@ -57,19 +58,43 @@ class loanclassModel:
         self.x_test[self.numerical_cols] = self.scaler.transform(self.x_test[self.numerical_cols])
 
     def train_models(self):
-        self.rf_model = RandomForestClassifier(n_estimators=100, random_state=77)
-        self.rf_model.fit(self.x_train, self.y_train)
+        self.model = XGBClassifier(n_estimators=100, random_state=77, use_label_encoder=False, eval_metric='logloss')
+        self.model.fit(self.x_train, self.y_train)
+
+    def finetune_models(self):
+        xgb_param_grid = {
+            'n_estimators': [50, 100, 200],
+            'learning_rate': [0.01, 0.1, 0.2],
+            'max_depth': [3, 6, 9],
+            'subsample': [0.8, 0.9, 1.0],
+            'colsample_bytree': [0.8, 0.9, 1.0]
+        }
+
+        xgb_grid_search = GridSearchCV(
+            estimator=XGBClassifier(random_state=42, use_label_encoder=False, eval_metric='error'),
+            param_grid=xgb_param_grid,
+            cv=5,
+            scoring='roc_auc',
+            n_jobs=-1
+        )
+
+        xgb_grid_search.fit(self.x_train, self.y_train)
+        self.model = xgb_grid_search.best_estimator_
+        xgb_best_score = xgb_grid_search.best_score_
+
+        print("Best hyperparameters for XGBoost:", xgb_grid_search.best_params_)
+        print("Best AUC score for XGBoost:", xgb_best_score)
 
     def evaluate_models(self):
-        rf_pred = self.rf_model.predict(self.x_test)
-        rf_proba = self.rf_model.predict_proba(self.x_test)[:, 1]
+        pred = self.model.predict(self.x_test)
+        proba = self.model.predict_proba(self.x_test)[:, 1]
 
-        print("Random Forest Classifier")
-        print(classification_report(self.y_test, rf_pred))
-        print(f"ROC AUC: {roc_auc_score(self.y_test, rf_proba):.4f}")
+        print("XGBoost Classifier")
+        print(classification_report(self.y_test, pred))
+        print(f"ROC AUC: {roc_auc_score(self.y_test, proba):.4f}")
 
-        ConfusionMatrixDisplay.from_estimator(self.rf_model, self.x_test, self.y_test)
-        plt.title("Random Forest Confusion Matrix")
+        ConfusionMatrixDisplay.from_estimator(self.model, self.x_test, self.y_test)
+        plt.title("XGBoost Confusion Matrix")
         plt.show()
 
     def run_all(self):
@@ -79,5 +104,4 @@ class loanclassModel:
         self.split_and_scale()
         self.train_models()
         self.evaluate_models()
-
-
+        self.finetune_models()
