@@ -34,7 +34,7 @@ def main():
     person_gender = st.selectbox("Gender", ["male", "female"])
     person_education = st.selectbox("Pendidikan", ["Master", "High School", "Bachelor", "Associate","Doctorate"])
     person_home_ownership = st.selectbox("Kepemilikan Rumah", ["RENT", "OWN","MORTGAGE","OTHER"])
-    loan_intent = st.selectbox("Tujuan Pinjaman", ["PERSONAL","EDUCATION","MEDICAL","VENTURE" "HOMEIMPROVEMENT","DEBTCONSOLIDATION"])
+    loan_intent = st.selectbox("Tujuan Pinjaman", ["PERSONAL","EDUCATION","MEDICAL","VENTURE","HOMEIMPROVEMENT","DEBTCONSOLIDATION"])
 
     input_data = pd.DataFrame({
     'person_age': [person_age],
